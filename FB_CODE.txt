@@ -1,0 +1,147 @@
+package com.itorbital.fbdataextract;
+
+import java.util.List;
+
+import com.restfb.Connection;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
+import com.restfb.Parameter;
+import com.restfb.Version;
+import com.restfb.types.Comment;
+import com.restfb.types.Page;
+import com.restfb.types.Post;
+import com.restfb.types.Reactions;
+import com.restfb.types.Reactions.ReactionItem;
+
+public class FBdataextract {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String reactionfacebook[]={"NONE", "LIKE", "LOVE", "WOW", "HAHA", "SAD", "ANGRY"};
+		String accestoken="EAACEdEose0cBALqckNjv4CJub6iJZBcWEAUrpCO3sZCscucHZAxnBRjG2ZCEJfIwzuNNJ9sJjDy33se35noZCd5eG2CfNkcDfjqoNoJeFaLY4nH5zFXVrFMHFepazeylZC5mhK5vlbpuu5hh2QVZCvFDZALJecI8WcvNyqzqOPUZARZBkYr3QsUBMIgENP6m21USZByZAFhd4JLFEQZDZD";
+		@SuppressWarnings("deprecation")
+		
+		FacebookClient fbclient=new DefaultFacebookClient(accestoken,Version.VERSION_2_10);//ownapp
+		//Connection<Post> resultfb=fbclient.fetchConnection(page.getId()+"/feed", Post.class,Parameter.with("fields","reactions.summary(1)"));
+	
+		//Connection<Group> result=fbclient.fetchConnection("me/groups", Group.class);
+		Page page=fbclient.fetchObject("Practicus", Page.class);
+		Connection<Post> result=fbclient.fetchConnection(page.getId()+"/feed", Post.class,Parameter.with("limit", 20));//,Parameter.with("fields","reactions.summary(1)"));
+		Connection<Post> resultfb=fbclient.fetchConnection(page.getId()+"/feed", Post.class,Parameter.with("fields","reactions.summary(1)"));
+
+		//Scanner input=new Scanner(System.in);
+		
+		//while(true){
+		 for(List<Post> feed : result){
+        	 for(Post apage : feed){
+        		 System.out.println("The post is:>   "+apage.getMessage());
+        		 System.out.println("The post id is:>   "+apage.getId());
+        		 
+        		 /*
+        		  * 
+        		  * Comments of a particular Post 
+        		  * 
+        		  * */
+        		 Connection<Comment> comments=fbclient.fetchConnection(apage.getId()+"/comments", Comment.class);
+        		 if(comments!=null){
+        			 int counter=0;	 
+        			 List<Comment> commentlist=comments.getData();
+        			
+        			 System.out.println("Underlying comments are:");
+        			for(Comment comment:commentlist){
+        				 System.out.println("Person who made the comment  :"+comments.getData().get(counter).getFrom().getName());
+        				 System.out.println("Comments : "+comment.getMessage());
+        			     counter++;
+        			    // if(comment.equals(commentlist.lastIndexOf(commentlist)))
+        			    //	 break;
+        			     
+        			     
+        			 }
+        		 }else{
+        			 System.out.println("Sorry no comments are available for this post");
+        			 
+        		 }
+        	       
+        		 /*
+        		  * 
+        		  * Reactions of  particular Post
+        		  * 
+        		  * 
+        		  */
+        		 
+        		         		for(List<Post> feeds : resultfb){
+                for(Post apages : feeds){
+                		// System.out.println("The post is:>   "+apage.getMessage());
+                		// System.out.println("The post id is:>   "+apage.getId());
+        		  Long reactionsCount=apages.getReactionsCount();
+        	        System.out.println("post id-->"+apages.getId()+"  reactionsCounts--->"+reactionsCount);
+        	       Reactions reactionsObj=apages.getReactions();
+        	       if(reactionsObj!=null)
+                   {
+        	    	   int wow=0,haha=0,likes=0,sad=0,angry=0,none= 0,love=0;
+                       System.out.println("bring it on reactions-------");
+                           for (ReactionItem reactionListItem : reactionsObj.getData()) 
+                           {
+                               /*System.out.println("id"+ reactionListItem.getId());
+                               System.out.println("id"+ reactionListItem.getName());
+                               //reactionsMap.put("name", reactionListItem.getName() );
+                               System.out.println("type"+reactionListItem.getType() );
+                                */
+                        	 if(reactionListItem.getType().toString().equals(reactionfacebook[0]))
+                        	      none++;	
+                        	 else if(reactionListItem.getType().toString().equals(reactionfacebook[1]))
+                        		 likes++;
+                        	 else if(reactionListItem.getType().toString().equals(reactionfacebook[2]))
+                        		 love++;
+                        	 else if(reactionListItem.getType().toString().equals(reactionfacebook[3]))
+                        		 wow++;
+                        	 else if(reactionListItem.getType().toString().equals(reactionfacebook[4]))
+                        		 haha++;
+                        	 else if(reactionListItem.getType().toString().equals(reactionfacebook[5]))
+                        		 sad++;
+                        	 else
+                        		 angry++;
+                  
+                    
+                        	   
+
+                           }
+                           System.out.println("likes:"+likes);
+                           System.out.println("loves:"+love);
+                           System.out.println("haha:"+haha);
+                           System.out.println("sad:"+sad);
+                           System.out.println("angry:"+angry);
+                           System.out.println("wow:"+wow);
+                           System.out.println("none:"+none);
+                          // break;
+                    }
+        	      break; }break;
+                }
+        		 // System.out.println(apage.getMessage());
+        		// System.out.println(apage.getComments().getData().get(counter).getMessage());
+        		 //System.out.println(apage.getCreatedTime().toString());
+        		 //System.out.println(apage.getMessage());
+        		 //counter++;
+        		 //Connection<Comment> comments=fbclient.fetchConnection(apage.getId().get)
+        	 //}
+        	 
+         //}
+		 
+		/* for(List<Post> pages : result){
+			 int Counter=0;
+        	 for(Post apage : pages){
+        		// System.out.println(apage.getMessage());
+        		// System.out.println(apage.getComments().getData().get(counter).getMessage());
+        		/* System.out.println(apage.getCreatedTime().toString());
+        		 System.out.println(apage.getMessage());
+        		 counter++;*/
+        		 
+        		 
+        	 }
+        	 
+         }
+
+	}
+
+}
+		 
