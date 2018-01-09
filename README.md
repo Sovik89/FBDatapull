@@ -1,2 +1,2 @@
 # FBDatapull
-#### Gata for different Fb pages for Sentimental analysis
+#### Data for different Fb pages for Sentimental analysis
